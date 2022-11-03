@@ -19,6 +19,7 @@ public class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
+    //깃허브
     @Test
     @Transactional
     @Rollback(false)
