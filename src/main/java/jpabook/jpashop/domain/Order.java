@@ -23,10 +23,13 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @OneToOne
+    @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
     private LocalDateTime orderDate; //주문시간
 
+    @Enumerated(EnumType.STRING) //EnumType의 종류 ORDINAL가 있는데 0, 1 이런식으로 순차적으로 배정되기 때문에 중간에 값이 추가되면 문제가 발생 따라서 무조건 String을 사용
     private OrderStatus status; // 주문상태 [ORDER, CANCLE]
 
 }
