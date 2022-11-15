@@ -23,4 +23,6 @@ public class Member {
     //따라서 member에서 order의 값을 변경해도 order 테이블의 값이 바뀌지 않음
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
+
+
 }
