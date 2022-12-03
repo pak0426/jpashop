@@ -46,7 +46,6 @@ public class OrderService {
         orderRepository.save(order);
 
         return order.getId();
-
     }
 
     /**
@@ -61,7 +60,9 @@ public class OrderService {
         order.cancle();
     }
 
-    //검색
+    /**
+     * 검색
+     */
 //    public List<Order> searchOrders(OrderSearch orderSearch) {
 //        return orderRepository.findAll(orderSearch);
 //    }
