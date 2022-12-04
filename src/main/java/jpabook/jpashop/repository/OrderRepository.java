@@ -20,11 +20,11 @@ public class OrderRepository {
 
     private final EntityManager em;
 
-    @Autowired
-    QOrder order;
-    @Autowired
-    QMember member;
+    private final JPAQueryFactory jpaQueryFactory;
 
+    /**
+     * save()
+     */
     public void save(Order order) {
         em.persist(order);
     }
@@ -42,6 +42,9 @@ public class OrderRepository {
 
         JPAQueryFactory query = new JPAQueryFactory(em);
 
+        QOrder order = QOrder.order;
+        QMember member = QMember.member;
+
         return query
                 .select(order)
                 .from(order)
@@ -53,6 +56,8 @@ public class OrderRepository {
     }
 
     private BooleanExpression statusEq(OrderSearch orderSearch) {
+        QOrder order = QOrder.order;
+
         if(orderSearch == null) {
             return null;
         }
@@ -60,6 +65,8 @@ public class OrderRepository {
     }
 
     private BooleanExpression nameLike(String memberName) {
+        QMember member = QMember.member;
+
         if(StringUtils.isEmpty(memberName)) {
             return null;
         }
