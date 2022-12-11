@@ -17,7 +17,7 @@ public class ItemRepository {
         //item값엔 기본적으로 id가 없을 것이다 그러면 신규건이니 item을 저장한다.
         //id값이 있다면 새로 생성된 item객체가 아니라는 뜻이니 else문을 타게 한다.
         //merge란 어디선가 값이 있는 item객체 이므로 병합을 해준다는 의미 쉽게 update를 한다고 생각하면 된다.
-        if(item.getId().equals(null)) {
+        if(item.getId() == null) {
             em.persist(item);
         }
         else {
