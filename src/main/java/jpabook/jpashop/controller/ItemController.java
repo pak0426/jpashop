@@ -3,8 +3,8 @@ package jpabook.jpashop.controller;
 import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.service.ItemService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +18,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class ItemController {
+
     private final ItemService itemService;
 
     @GetMapping("/items/new")
@@ -70,13 +71,10 @@ public class ItemController {
         return "items/updateItemForm";
     }
 
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
-
     @PostMapping("items/{itemId}/edit")
     public String updateItem(@PathVariable Long itemId, @ModelAttribute("bookForm") BookForm bookForm) { //html에서의 form이름이 그대로 넘어옴
 
+        //merge 전략 (안쓰는걸 추천)
 //        Book book = new Book();
 //        book.setId(bookForm.getId());
 //        book.setName(bookForm.getName());
@@ -86,6 +84,7 @@ public class ItemController {
 //        book.setIsbn(bookForm.getIsbn());
 //        itemService.save(book);
 
+        //변경감지
         itemService.updateItem(itemId, bookForm.getName(), bookForm.getPrice(), bookForm.getStockQuantity());
 
         return "redirect:/items";

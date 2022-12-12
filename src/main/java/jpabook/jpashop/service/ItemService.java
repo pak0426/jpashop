@@ -33,7 +33,6 @@ public class ItemService {
         Item findItem = itemRepository.findOne(itemId);
         findItem.setName(name);
         findItem.setPrice(price);
-        findItem.setPrice(price);
         findItem.setStockQuantity(stockQuantity);
     }
 }
