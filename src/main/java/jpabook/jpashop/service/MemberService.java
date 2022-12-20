@@ -45,4 +45,14 @@ public class MemberService {
     public Member findOne(Long id) {
         return memberRepository.findOne(id);
     }
+
+
+    //@Transactional : 선언적 트랜잭션 처리를 지원한다.
+    //변경 감지 시작
+    // .. 트랜젝션 시작 .. 영속성 Entity 조회 (없으면 DB 조회 후 영속화) .. 조회한 영속성 Entity 데이터 수정 .. 트랜잭션 커밋
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
 }
