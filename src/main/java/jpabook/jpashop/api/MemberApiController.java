@@ -4,18 +4,47 @@ import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class MemberApiController {
     private final MemberService memberService;
 
-    //Post : 등록, Put : 수정
+    //Get : 조회, Post : 등록, Put : 수정
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1() {
+        return memberService.findMembers();
+    }
+
+    @GetMapping("/api/v2/members")
+    public SelectMemberResponseV2 membersV2() {
+        List<Member> findMembers = memberService.findMembers();
+
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+        return new SelectMemberResponseV2(collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SelectMemberResponseV2<T> {
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
 
     //파라미터에 entity 그대로 받지말고 dto를 만들어서 하는게 좋다. v2 참고
     @PostMapping("/api/v1/members")
@@ -35,16 +64,6 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
-    @PutMapping("/api/v2/members/{id}")
-    public UpdateMemberResponse updateMemberV1(
-            @PathVariable("id") Long id,
-            @RequestBody @Valid UpdateMemberRequest request) {
-
-        //service에서 변경감지를 꼭 사용하자
-        memberService.update(id, request.getName());
-
-    }
-
     @Data
     static class CreateMemberResponse {
         private Long id;
@@ -59,8 +78,19 @@ public class MemberApiController {
         private String name;
     }
 
+    @PutMapping("/api/v2/members/{id}")
+    public UpdateMemberResponse updateMemberV1(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid UpdateMemberRequest request) {
+
+        //service에서 변경감지를 꼭 사용하자
+        memberService.update(id, request.getName());
+        Member findMember = memberService.findOne(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
 
     @Data
+    @AllArgsConstructor
     static class UpdateMemberResponse {
         private Long id;
         private String name;
@@ -69,7 +99,6 @@ public class MemberApiController {
     //@RequiredArgsConstructor 초기화 되지 않은 final 필드와 @NonNull 어노테이션이 붙은 필드에 대한 생성자 생성
     //@AllArgsConstructor 모든 필드에 대한 생성자 생성.
     @Data
-    @AllArgsConstructor
     static class UpdateMemberRequest {
         private Long id;
         private String name;
