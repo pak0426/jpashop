@@ -23,6 +23,7 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
+    //즉시로딩, 지연로딩의 차이 실제로 member를 조회할때 쿼리가 날라간다
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id") //FK 설정
     private Member member;
@@ -57,6 +58,7 @@ public class Order {
     }
 
     //==생성 메서드==//
+    //파라미터 OrderItem... orderItems orderItems를 여러개 넘길 수 있다.
     public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
         order.setMember(member);

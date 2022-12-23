@@ -24,6 +24,7 @@ public class MemberApiController {
         return memberService.findMembers();
     }
 
+    //Entity를 외부에 직접 반환하지말아라!
     @GetMapping("/api/v2/members")
     public SelectMemberResponseV2 membersV2() {
         List<Member> findMembers = memberService.findMembers();
@@ -31,12 +32,13 @@ public class MemberApiController {
         List<MemberDto> collect = findMembers.stream()
                 .map(m -> new MemberDto(m.getName()))
                 .collect(Collectors.toList());
-        return new SelectMemberResponseV2(collect);
+        return new SelectMemberResponseV2(collect.size(), collect);
     }
 
     @Data
     @AllArgsConstructor
     static class SelectMemberResponseV2<T> {
+        private int count; //totalCount 추가
         private T data;
     }
 

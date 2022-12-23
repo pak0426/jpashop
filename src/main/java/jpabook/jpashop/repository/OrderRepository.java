@@ -55,9 +55,11 @@ public class OrderRepository {
                 .fetch();
     }
 
+
     public List<Order> findAllByString(OrderSearch orderSearch) {
         //language=JPAQL
-        String jpql = "select o From Order o join o.member m";
+//        String jpql = "select o From Order o left outer join o.member m left outer join o.orderItems oi left outer join oi.item";
+        String jpql = "select o From Order o left outer join o.member m";
         boolean isFirstCondition = true;
         //주문 상태 검색
         if (orderSearch.getOrderStatus() != null) {

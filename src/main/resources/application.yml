@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create #create : DB를 새로 생성함, none : DB를 지우지 않음
     properties:
       hibernate:
 #        show_sql: true
