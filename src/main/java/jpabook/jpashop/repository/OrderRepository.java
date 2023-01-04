@@ -142,4 +142,31 @@ public class OrderRepository {
                         "join fetch o.delivery d", Order.class)
                 .getResultList();
     }
+
+    //현재 order 결과가 4개씩 나오는데 dinstinct를 사용하여 중복 제거를 해준다.
+    //실제로 쿼리에서 distinct가 들어가는데 쿼리에서의 distinct는 1,2열이 모든 컬럼까지 일치해야 중복 제거를 해준다. 따라서 쿼리를 날려도 DB조회결과는 4row다.
+    //하지만 jpa에서 그걸 알아서 해결해준다. Order가 중복인 경우 알아서 걸러준다.
+    //1대 N 조인을 하면 페이징이 안먹는다. -> DB 입장에서는 4개의 row를 페이징해야하기 떄문이다.
+    //로그에 HHH000104: firstResult/maxResults specified with collection fetch; applying in memory! 이렇게 뜬다.
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o " +
+                        "join fetch o.member m " +
+                        "join fetch o.delivery d " +
+                        "join fetch o.orderItems oi " +
+                        "join fetch oi.item i", Order.class)
+//                .setFirstResult(1)
+//                .setMaxResults(100)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select o from Order o " +
+                                "join fetch o.member m " +
+                                "join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }

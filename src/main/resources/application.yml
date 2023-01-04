@@ -12,6 +12,7 @@ spring:
       hibernate:
 #        show_sql: true
         format_sql: true
+        default_batch_fetch_size: 100 #이 설정을 하면 oneToMany Fetch join에서 Many쪽의 쿼리에서의 in 조건을 몇개를 할지 결정 할 수 있다. 지금은 in 쿼리의 갯수가 100개로 설정
 
 logging:
   level:
