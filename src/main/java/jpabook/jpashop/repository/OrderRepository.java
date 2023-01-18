@@ -14,13 +14,20 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jpabook.jpashop.domain.QMember.member;
+import static jpabook.jpashop.domain.QOrder.order;
+
 @Repository
-@RequiredArgsConstructor
 public class OrderRepository {
 
     private final EntityManager em;
 
-    private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory query;
+
+    public OrderRepository(EntityManager em, JPAQueryFactory query) {
+        this.em = em;
+        this.query = new JPAQueryFactory(em);
+    }
 
     /**
      * save()
@@ -39,20 +46,27 @@ public class OrderRepository {
      * @return
      */
     public List<Order> findAll(OrderSearch orderSearch) {
-
-        JPAQueryFactory query = new JPAQueryFactory(em);
-
-        QOrder order = QOrder.order;
-        QMember member = QMember.member;
-
         return query
                 .select(order)
                 .from(order)
                 .join(order.member, member)
-                .where(statusEq(orderSearch),
-                        nameLike(orderSearch.getMemberName()))
+                .where(statusEq(orderSearch.getOrderStatus()), nameLike(orderSearch.getMemberName()))
                 .limit(1000)
                 .fetch();
+    }
+
+    private BooleanExpression statusEq(OrderStatus statusCond) {
+        if (statusCond == null) {
+            return null;
+        }
+        return order.status.eq(statusCond);
+    }
+
+    private BooleanExpression nameLike(String memberName) {
+        if (!StringUtils.hasText(memberName)) {
+            return null;
+        }
+        return member.name.like(memberName);
     }
 
 
@@ -114,25 +128,6 @@ public class OrderRepository {
         cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList();
-    }
-
-    private BooleanExpression statusEq(OrderSearch orderSearch) {
-        QOrder order = QOrder.order;
-
-        if(orderSearch == null) {
-            return null;
-        }
-        return order.status.eq(orderSearch.getOrderStatus());
-    }
-
-    private BooleanExpression nameLike(String memberName) {
-        QMember member = QMember.member;
-
-        if(StringUtils.isEmpty(memberName)) {
-            return null;
-        }
-
-        return member.name.eq(memberName);
     }
 
     public List<Order> findAllWithMemberDelivery() {
