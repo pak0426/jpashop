@@ -43,7 +43,7 @@ public class MemberService {
 
     //회원 한명 조회
     public Member findOne(Long id) {
-        return memberRepository.findOne(id);
+        return memberRepository.findById(id).get();
     }
 
 
@@ -52,7 +52,7 @@ public class MemberService {
     // .. 트랜젝션 시작 .. 영속성 Entity 조회 (없으면 DB 조회 후 영속화) .. 조회한 영속성 Entity 데이터 수정 .. 트랜잭션 커밋
     @Transactional
     public void update(Long id, String name) {
-        Member member = memberRepository.findOne(id);
+        Member member = memberRepository.findById(id).get();
         member.setName(name);
     }
 }
